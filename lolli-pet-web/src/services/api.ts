@@ -783,7 +783,7 @@ export const listarProntuarios = async (petId: number): Promise<Prontuario[]> =>
   console.log('[PRONTUARIO] Listando prontuários do pet:', petId);
 
   return apiRequest<Prontuario[]>(
-    `/prontuarios?pet_id=${petId}`,
+    `/prontuarios/${petId}`,
     {
       method: 'GET',
     },
@@ -801,7 +801,7 @@ export const criarProntuario = async (data: CriarProntuarioData): Promise<Prontu
   console.log('[PRONTUARIO] Criando entrada no prontuário');
 
   return apiRequest<Prontuario>(
-    '/prontuarios',
+    `/prontuarios/${data.pet_id}`,
     {
       method: 'POST',
       body: JSON.stringify(data),

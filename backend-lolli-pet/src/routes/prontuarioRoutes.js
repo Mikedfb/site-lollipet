@@ -7,9 +7,12 @@ const router = new Router()
 // Permite desabilitar checagem de auth em dev definindo DISABLE_AUTH=true no .env
 const authMiddleware = process.env.DISABLE_AUTH === 'true' ? (req, res, next) => next() : loginRequired
 
-// GET all historicos for a pet
+// Rotas específicas de prontuário (devem vir antes das rotas com :id)
+router.put('/:id', authMiddleware, prontuarioController.update)
+router.delete('/:id', authMiddleware, prontuarioController.delete)
+
+// Rotas de pet (devem vir depois para não conflitar)
 router.get('/:petId', authMiddleware, prontuarioController.index)
-// POST new historico for a pet
-router.post('/:petId/historico', authMiddleware, prontuarioController.store)
+router.post('/:petId', authMiddleware, prontuarioController.store)
 
 export default router
