@@ -1,27 +1,14 @@
 #!/bin/sh
-set -e
 
 echo "================================"
 echo "🔄 Aguardando banco de dados..."
 echo "================================"
 
-# Aguarda o banco estar realmente pronto
-echo "⏳ Tentando conectar ao banco de dados..."
-max_attempts=30
-attempt=0
+# Aguarda 10 segundos para garantir que o banco está completamente pronto
+# O Docker Compose já garante via healthcheck, mas damos um tempo extra
+sleep 10
 
-until nc -z db 3306 || [ $attempt -eq $max_attempts ]; do
-  attempt=$((attempt + 1))
-  echo "⏳ Tentativa $attempt/$max_attempts - Aguardando banco..."
-  sleep 2
-done
-
-if [ $attempt -eq $max_attempts ]; then
-  echo "❌ Timeout: Banco de dados não ficou pronto!"
-  exit 1
-fi
-
-echo "✅ Banco de dados está pronto!"
+echo "✅ Banco de dados deve estar pronto!"
 echo ""
 
 echo "================================"
@@ -31,15 +18,20 @@ echo "================================"
 npx sequelize-cli db:migrate
 
 if [ $? -eq 0 ]; then
+  echo ""
   echo "✅ Migrations executadas com sucesso!"
+  echo ""
 else
+  echo ""
   echo "❌ Erro ao executar migrations!"
+  echo "Verifique as configurações do banco de dados."
+  echo ""
   exit 1
 fi
 
-echo ""
 echo "================================"
 echo "🚀 Iniciando servidor..."
 echo "================================"
+echo ""
 
-npm start
+exec npm start
